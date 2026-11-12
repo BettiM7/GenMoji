@@ -1,0 +1,47 @@
+# JetBrains IDEs (PyCharm, IntelliJ IDEA, etc.)
+.idea/
+*.iml
+out/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+htmlcov/
+coverage.xml
+.coverage*
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Build and packaging output
+build/
+dist/
+*.egg-info/
+*.whl
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
