@@ -17,7 +17,8 @@ package versions with `python -m pip freeze > outputs/environment.txt`.
 
 ## Processing choices
 
-- Render the full color SVG canvas directly at **512 × 512**, without upscaling a
+- Render the full color SVG canvas directly at **512 × 512** for SD1.5/Sana
+  or **1024 × 1024** for SDXL (`genmoji prepare --architecture sdxl`), without upscaling a
   72px PNG. Composite transparency onto **white** and save **RGB PNGs**.
 - Remove undefined local SVG marker references in memory before rendering
   (one OpenMoji 17.0.0 flag references an absent `Dot` marker that crashes CairoSVG).
@@ -40,7 +41,7 @@ package versions with `python -m pip freeze > outputs/environment.txt`.
 - Existing output directories are refused. Use a new path when changing settings;
   processing failures do not publish a partial dataset.
 
-CLI overrides: `--source`, `--output`, `--resolution`, `--seed`,
+CLI overrides: `--architecture sd15|sdxl` (selects default resolution and output path), `--source`, `--output`, `--resolution`, `--seed`,
 `--validation-fraction`, `--test-fraction`, and `--limit`. A smoke subset can have
 empty held-out splits; use the full dataset for experiments.
 If a split is empty, loading the entire ImageFolder root can fail in Datasets;
@@ -111,6 +112,21 @@ accelerate launch external/diffusers/examples/text_to_image/train_text_to_image_
   --max_train_steps 1000 --seed 42 \
   --output_dir outputs/diffusion/lora
 ```
+
+### Stable Diffusion XL / Person 1
+
+The shared launcher selects the pinned SDXL LoRA trainer and validates 1024px RGB
+metadata. Use the same architecture flag for PNG conversion and training:
+
+```bash
+genmoji prepare --architecture sdxl
+genmoji diffusion train --architecture sdxl --device cuda
+```
+
+This renders source SVGs directly at 1024px into `data/processed/openmoji-1024`;
+family-based splits and captions are identical to the 512px version. Outputs go
+to `outputs/diffusion/lora-sdxl`. In the Colab notebook, set `ARCHITECTURE` at
+the start to apply the selection to all steps, including archive restore and resume.
 
 ### Sana 0.6B / Person 2
 

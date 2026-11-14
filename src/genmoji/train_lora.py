@@ -1,4 +1,4 @@
-"""Single-device SD 1.5 LoRA training using the pinned Diffusers example."""
+"""Single-device SD 1.5 / SDXL LoRA training using the pinned Diffusers example."""
 
 from argparse import BooleanOptionalAction
 from datetime import datetime, timezone
@@ -16,17 +16,21 @@ import time
 import uuid
 
 
+from genmoji.models import PROFILES, dataset_path
+
+
 MODEL = "stable-diffusion-v1-5/stable-diffusion-v1-5"
 TRAINER = "examples/text_to_image/train_text_to_image_lora.py"
 VERSION = "0.35.1"
 
 
 def add_arguments(parser):
-    parser.add_argument("--data", type=Path, default=Path("data/processed/openmoji-512"),
+    parser.add_argument("--architecture", choices=PROFILES, default="sd15")
+    parser.add_argument("--data", type=Path, default=None,
                         help="Prepared dataset root containing imagefolder/ and provenance/")
-    parser.add_argument("--output", type=Path, default=Path("outputs/diffusion/lora"))
+    parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--trainer-root", type=Path, default=Path("external/diffusers"))
-    parser.add_argument("--model", default=MODEL)
+    parser.add_argument("--model", default=None)
     parser.add_argument("--revision", default="main", help="Hub revision; resolved to a commit before training")
     parser.add_argument("--device", choices=["auto", "cuda", "mps", "cpu"], default="auto")
     parser.add_argument("--precision", choices=["auto", "no", "fp16", "bf16"], default="auto")
@@ -43,16 +47,25 @@ def add_arguments(parser):
     parser.add_argument("--dry-run", action="store_true", help="Check data and print command without GPU imports or downloads")
 
 
+def configure(args):
+    """Apply family defaults while preserving explicit path/model overrides."""
+    profile = PROFILES[args.architecture]
+    args.data = args.data or Path(dataset_path(args.architecture))
+    args.output = args.output or Path(profile["output"])
+    args.model = args.model or profile["model"]
+    return profile
+
+
 def sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def validate_data(root):
+def validate_data(root, resolution=512):
     """Restrict training to the prepared train split and validate its metadata."""
     root = root.resolve()
     manifest = json.loads((root / "provenance/manifest.json").read_text())
-    if manifest["resolution"] != 512 or manifest["mode"] != "RGB":
-        raise ValueError("Training requires the shared 512px RGB dataset")
+    if manifest["resolution"] != resolution or manifest["mode"] != "RGB":
+        raise ValueError(f"Training requires the {resolution}px RGB dataset for the selected architecture")
     folder = root / "imagefolder/train"
     rows = [json.loads(line) for line in (folder / "metadata.jsonl").read_text().splitlines()]
     names = set()
@@ -108,14 +121,14 @@ def select_device(requested, precision):
     return device, precision
 
 
-def verify_trainer(root):
-    script = root / TRAINER
+def verify_trainer(root, trainer=TRAINER):
+    script = root / trainer
     if not script.is_file():
         raise ValueError("Trainer missing. Run: git clone --depth 1 --branch v0.35.1 "
                          "https://github.com/huggingface/diffusers.git external/diffusers")
     commit = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     tag = subprocess.check_output(["git", "-C", str(root), "rev-parse", "v0.35.1^{commit}"], text=True).strip()
-    original = subprocess.check_output(["git", "-C", str(root), "show", f"v0.35.1:{TRAINER}"])
+    original = subprocess.check_output(["git", "-C", str(root), "show", f"v0.35.1:{trainer}"])
     if commit != tag or script.read_bytes() != original:
         raise ValueError("Use the unmodified Diffusers v0.35.1 trainer")
     if metadata.version("diffusers") != VERSION:
@@ -124,10 +137,11 @@ def verify_trainer(root):
 
 
 def build_command(args, model_path, precision, resume):
+    profile = configure(args)
     options = {
         "pretrained_model_name_or_path": model_path,
         "train_data_dir": args.data.resolve() / "imagefolder/train",
-        "image_column": "image", "caption_column": "text", "resolution": 512,
+        "image_column": "image", "caption_column": "text", "resolution": profile["resolution"],
         "train_batch_size": args.batch_size, "gradient_accumulation_steps": args.accumulation,
         "rank": args.rank, "learning_rate": args.learning_rate,
         "lr_scheduler": "constant", "lr_warmup_steps": 0,
@@ -139,7 +153,7 @@ def build_command(args, model_path, precision, resume):
     }
     if resume:
         options["resume_from_checkpoint"] = resume
-    command = [sys.executable, str(args.trainer_root.resolve() / TRAINER)]
+    command = [sys.executable, str(args.trainer_root.resolve() / profile["trainer"])]
     for key, value in options.items():
         command.extend([f"--{key}", str(value)])
     command.append("--center_crop")
@@ -161,12 +175,13 @@ def dataset_identity(root):
 
 
 def train(args):
+    profile = configure(args)
     for name in ("steps", "batch_size", "accumulation", "rank", "checkpoint_every", "keep_checkpoints"):
         if getattr(args, name) < 1:
             raise ValueError(f"{name.replace('_', '-')} must be positive")
     if not math.isfinite(args.learning_rate) or args.learning_rate <= 0:
         raise ValueError("learning-rate must be finite and positive")
-    manifest = validate_data(args.data)
+    manifest = validate_data(args.data, profile["resolution"])
     resume = resolve_resume(args.output, args.resume, args.steps)
     if args.dry_run:
         precision = args.precision if args.precision != "auto" else ("fp16" if args.device == "cuda" else "no")
@@ -177,11 +192,13 @@ def train(args):
     if int(os.environ.get("WORLD_SIZE", "1")) != 1:
         raise ValueError("Launch this command directly, not through a distributed launcher")
     device, precision = select_device(args.device, args.precision)
-    trainer_commit = verify_trainer(args.trainer_root.resolve())
+    trainer_commit = verify_trainer(args.trainer_root.resolve(), profile["trainer"])
     identity = dataset_identity(args.data.resolve())
     previous = None
     if resume:
         previous = json.loads((args.output / "training.json").read_text())
+        if previous["config"].get("architecture", "sd15") != args.architecture:
+            raise ValueError("Cannot resume with changed architecture")
         # Preserve optimizer/scheduler semantics; increasing the update budget is allowed.
         for key in ("model", "rank", "learning_rate", "batch_size", "accumulation", "seed"):
             if previous["config"][key] != getattr(args, key):
@@ -199,7 +216,8 @@ def train(args):
     # A local snapshot also pins the scheduler: the upstream script does not
     # forward --revision when loading that component.
     model_path = snapshot_download(args.model, revision=revision, allow_patterns=[
-        "model_index.json", "scheduler/*.json", "tokenizer/*",
+        "model_index.json", "scheduler/*.json", "tokenizer/*", "tokenizer_2/*",
+        "text_encoder_2/config.json", "text_encoder_2/model.safetensors",
         "text_encoder/config.json", "text_encoder/model.safetensors",
         "unet/config.json", "unet/diffusion_pytorch_model.safetensors",
         "vae/config.json", "vae/diffusion_pytorch_model.safetensors",
@@ -209,7 +227,7 @@ def train(args):
     record = {
         "config": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
         "device": device, "precision": precision, "model_revision": revision,
-        "trainer_commit": trainer_commit, "trainer_sha256": sha256(args.trainer_root / TRAINER),
+        "trainer_commit": trainer_commit, "trainer_sha256": sha256(args.trainer_root / profile["trainer"]),
         "dataset_identity": identity, "dataset_manifest": manifest,
         "packages": {dist.metadata["Name"]: dist.version for dist in metadata.distributions()},
         "command": command, "started_at": datetime.now(timezone.utc).isoformat(),

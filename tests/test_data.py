@@ -59,6 +59,17 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(set(splits), {"train", "validation", "test"})
         self.assertEqual(len(splits["train"]), manifest["counts"]["train"])
 
+    def test_sdxl_renders_svg_directly_at_1024(self):
+        output = self.root / "sdxl"
+        manifest = prepare_dataset(self.source, output, resolution=1024, limit=1,
+                                   validation_fraction=0, test_fraction=0)
+        self.assertEqual(manifest["resolution"], 1024)
+        image_path = next((output / "imagefolder/train").glob("*.png"))
+        with Image.open(image_path) as image:
+            self.assertEqual(image.size, (1024, 1024))
+            self.assertEqual(image.mode, "RGB")
+            self.assertEqual(image.getpixel((0, 0)), (255, 255, 255))
+
     def test_repeatable_splits_independent_of_metadata_order(self):
         prepare_dataset(self.source, self.root / "first", resolution=8)
         self.rows.reverse()

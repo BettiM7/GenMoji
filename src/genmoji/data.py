@@ -1,4 +1,4 @@
-"""OpenMoji SVGs -> shared RGB PNG + caption ImageFolder for SD 1.5 and Sana."""
+"""OpenMoji SVGs -> shared RGB PNG + caption ImageFolder for SD 1.5, SDXL and Sana."""
 
 import hashlib
 import io

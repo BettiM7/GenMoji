@@ -11,7 +11,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from genmoji.train_lora import add_arguments, build_command, resolve_resume, select_device, train, validate_data
+from genmoji.train_lora import add_arguments, build_command, configure, resolve_resume, select_device, train, validate_data
 
 
 class TrainingTests(unittest.TestCase):
@@ -56,6 +56,47 @@ checkpoint.mkdir(exist_ok=True)
         stack.enter_context(redirect_stdout(io.StringIO()))
         self.addCleanup(stack.close)
         return stack
+
+    def test_family_defaults_and_commands(self):
+        for architecture, resolution, trainer in (
+            ("sd15", 512, "train_text_to_image_lora.py"),
+            ("sdxl", 1024, "train_text_to_image_lora_sdxl.py"),
+        ):
+            with self.subTest(architecture=architecture):
+                parser = argparse.ArgumentParser()
+                add_arguments(parser)
+                args = parser.parse_args(["--architecture", architecture])
+                configure(args)
+                command = build_command(args, args.model, "fp16", None)
+                self.assertEqual(Path(command[1]).name, trainer)
+                self.assertEqual(command[command.index("--resolution") + 1], str(resolution))
+                self.assertEqual(args.data.name, f"openmoji-{resolution}")
+                self.assertIn(architecture == "sdxl" and "xl" or "v1-5", args.model)
+
+    def test_sdxl_export_downloads_second_encoder_and_rejects_cross_family_resume(self):
+        self.args.architecture = "sdxl"
+        manifest = self.data / "provenance/manifest.json"
+        manifest.write_text(json.dumps({"resolution": 1024, "mode": "RGB", "counts": {"train": 1}}))
+        old = self.args.trainer_root / "examples/text_to_image/train_text_to_image_lora.py"
+        old.with_name("train_text_to_image_lora_sdxl.py").write_bytes(old.read_bytes())
+        self.mocked_runtime()
+        with patch("huggingface_hub.snapshot_download", return_value=str(self.root / "model")) as download:
+            train(self.args)
+        self.assertIn("text_encoder_2/model.safetensors", download.call_args.kwargs["allow_patterns"])
+        record = json.loads((self.args.output / "training.json").read_text())
+        self.assertEqual(record["config"]["architecture"], "sdxl")
+        self.assertEqual(record["status"], "completed")
+        self.args.resume = "latest"
+        train(self.args)
+        self.args.architecture = "sd15"
+        manifest.write_text(json.dumps({"resolution": 512, "mode": "RGB", "counts": {"train": 1}}))
+        with self.assertRaisesRegex(ValueError, "changed architecture"):
+            train(self.args)
+
+    def test_sdxl_rejects_sd15_dataset_before_downloading(self):
+        self.args.architecture = "sdxl"
+        with self.assertRaisesRegex(ValueError, "1024px"):
+            train(self.args)
 
     def test_data_rejects_missing_images_duplicate_and_escaping_names(self):
         for rows in ([{"file_name": "missing.png", "text": "caption"}],
