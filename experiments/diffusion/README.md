@@ -89,7 +89,12 @@ Outputs include:
   `StableDiffusionPipeline.load_lora_weights(...)` or
   `StableDiffusionXLPipeline.load_lora_weights(...)` for SDXL.
 - `checkpoint-N/`: optimizer/model/RNG state and adapter exports for resume.
-  Only the last three checkpoints are retained by default.
+  Save every 50 updates; keep the newest three plus every 500-step milestone
+  permanently by default. The Colab notebook keeps the newest two plus milestones.
+  At step 950 the notebook retains 500, 900 and 950. Use `--keep-checkpoints`
+  to set the recent count and `--keep-every` to set the milestone interval
+  (`0` disables milestones). The milestone interval must be a multiple of the
+  checkpoint interval. Milestones add to storage usage.
 - `training.json`, `run-*.json`, and `dataset-manifest.json`: settings, exact
   command, resolved model revision, dataset hashes, package versions and status.
 - TensorBoard events under `logs/` for training loss and learning rate.
@@ -106,6 +111,10 @@ validation and quantitative evaluation remain separate TODOs; loss alone does no
 establish emoji quality. MPS training and CUDA training still require real hardware
 smoke tests before relying on a long run.
 
+Checkpoint retention runs after a full Accelerate save returns successfully,
+using a wrapper around the unmodified upstream trainer. The upstream pre-save
+deletion is disabled so it cannot remove milestones or prune before a failed save.
+This confirms filesystem completion, not remote synchronization of a Drive mount.
 The optimization loop and adapter exports use the unmodified
 [Diffusers v0.35.1 trainer](https://github.com/huggingface/diffusers/blob/v0.35.1/examples/text_to_image/train_text_to_image_lora.py).
 Automated comparison grids and evaluation tooling remain to implement.

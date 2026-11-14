@@ -68,7 +68,7 @@ checkpoint.mkdir(exist_ok=True)
                 args = parser.parse_args(["--architecture", architecture])
                 configure(args)
                 command = build_command(args, args.model, "fp16", None)
-                self.assertEqual(Path(command[1]).name, trainer)
+                self.assertEqual(Path(command[command.index("--trainer") + 1]).name, trainer)
                 self.assertEqual(command[command.index("--resolution") + 1], str(resolution))
                 self.assertEqual(args.data.name, f"openmoji-{resolution}")
                 self.assertIn(architecture == "sdxl" and "xl" or "v1-5", args.model)
@@ -98,6 +98,11 @@ checkpoint.mkdir(exist_ok=True)
         with self.assertRaisesRegex(ValueError, "1024px"):
             train(self.args)
 
+    def test_milestones_must_align_with_save_interval(self):
+        self.args.checkpoint_every = 60
+        with self.assertRaisesRegex(ValueError, "multiple"):
+            train(self.args)
+
     def test_data_rejects_missing_images_duplicate_and_escaping_names(self):
         for rows in ([{"file_name": "missing.png", "text": "caption"}],
                      [{"file_name": "../emoji.png", "text": "caption"}],
@@ -120,6 +125,9 @@ checkpoint.mkdir(exist_ok=True)
         command = build_command(self.args, "/model path", "fp16", "checkpoint-250")
         self.assertEqual(command[command.index("--pretrained_model_name_or_path") + 1], "/model path")
         self.assertEqual(command[command.index("--train_data_dir") + 1], str(self.folder.resolve()))
+        self.assertNotIn("--checkpoints_total_limit", command)
+        self.assertEqual(command[command.index("--checkpointing_steps") + 1], "50")
+        self.assertEqual(command[command.index("--keep-every") + 1], "500")
         self.assertNotIn("--random_flip", command)
         self.assertIn("--gradient_checkpointing", command)
         self.assertEqual(command[command.index("--resume_from_checkpoint") + 1], "checkpoint-250")

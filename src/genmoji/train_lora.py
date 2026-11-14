@@ -40,8 +40,11 @@ def add_arguments(parser):
     parser.add_argument("--rank", type=int, default=4)
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--checkpoint-every", type=int, default=250)
-    parser.add_argument("--keep-checkpoints", type=int, default=3)
+    parser.add_argument("--checkpoint-every", type=int, default=50)
+    parser.add_argument("--keep-checkpoints", type=int, default=3,
+                        help="Number of newest checkpoints to keep, plus milestones")
+    parser.add_argument("--keep-every", type=int, default=500,
+                        help="Also retain every N-step checkpoint permanently; 0 disables milestones")
     parser.add_argument("--resume", help="latest or checkpoint-N inside the output directory")
     parser.add_argument("--gradient-checkpointing", action=BooleanOptionalAction, default=True)
     parser.add_argument("--dry-run", action="store_true", help="Check data and print command without GPU imports or downloads")
@@ -147,13 +150,15 @@ def build_command(args, model_path, precision, resume):
         "lr_scheduler": "constant", "lr_warmup_steps": 0,
         "max_train_steps": args.steps, "seed": args.seed,
         "checkpointing_steps": args.checkpoint_every,
-        "checkpoints_total_limit": args.keep_checkpoints,
         "mixed_precision": precision, "dataloader_num_workers": 0,
         "output_dir": args.output.resolve(), "report_to": "tensorboard",
     }
     if resume:
         options["resume_from_checkpoint"] = resume
-    command = [sys.executable, str(args.trainer_root.resolve() / profile["trainer"])]
+    command = [sys.executable, "-m", "genmoji.checkpoints",
+               "--keep-recent", str(args.keep_checkpoints),
+               "--keep-every", str(args.keep_every),
+               "--trainer", str(args.trainer_root.resolve() / profile["trainer"]), "--"]
     for key, value in options.items():
         command.extend([f"--{key}", str(value)])
     command.append("--center_crop")
@@ -179,6 +184,10 @@ def train(args):
     for name in ("steps", "batch_size", "accumulation", "rank", "checkpoint_every", "keep_checkpoints"):
         if getattr(args, name) < 1:
             raise ValueError(f"{name.replace('_', '-')} must be positive")
+    if args.keep_every < 0:
+        raise ValueError("keep-every must be nonnegative")
+    if args.keep_every and args.keep_every % args.checkpoint_every:
+        raise ValueError("keep-every must be a multiple of checkpoint-every")
     if not math.isfinite(args.learning_rate) or args.learning_rate <= 0:
         raise ValueError("learning-rate must be finite and positive")
     manifest = validate_data(args.data, profile["resolution"])
@@ -228,6 +237,7 @@ def train(args):
         "config": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
         "device": device, "precision": precision, "model_revision": revision,
         "trainer_commit": trainer_commit, "trainer_sha256": sha256(args.trainer_root / profile["trainer"]),
+        "retention_wrapper_sha256": sha256(Path(__file__).with_name("checkpoints.py")),
         "dataset_identity": identity, "dataset_manifest": manifest,
         "packages": {dist.metadata["Name"]: dist.version for dist in metadata.distributions()},
         "command": command, "started_at": datetime.now(timezone.utc).isoformat(),
