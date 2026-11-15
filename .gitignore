@@ -54,3 +54,5 @@ data/processed/*
 outputs/*
 !outputs/.gitkeep
 external/
+
+/downloads/
