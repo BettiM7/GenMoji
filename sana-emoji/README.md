@@ -1,5 +1,7 @@
 # GenMoji: Sana baseline (Person 2)
 
+The separate [MPS LoRA feasibility report](TRAINING_FEASIBILITY.md) records the one-update diagnostic and its scheduler limitation. Baseline execution below remains unchanged.
+
 Reproducible pretrained text-to-emoji generation with Sana 600M at 512×512 on Apple Silicon. This baseline performs no training or sampling experiments. The original `sana-emoji/test_sana.py` is preserved.
 
 ## Setup

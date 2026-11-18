@@ -1,0 +1,5 @@
+# Reproducible image payloads; keep metadata, manifests, reports and contact sheets
+openmoji-17.0.0/originals/png/
+openmoji-17.0.0/originals/unused_previews/
+openmoji-17.0.0/images/
+*.log

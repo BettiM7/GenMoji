@@ -1,0 +1,2 @@
+# Install only into feasibility/vendor with --no-deps; reuse baseline dependencies.
+peft==0.21.3

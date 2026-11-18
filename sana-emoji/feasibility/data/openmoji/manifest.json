@@ -1,0 +1,66 @@
+[
+  {
+    "file": "1F34E.png",
+    "caption": "A red apple, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F34E.png",
+    "sha256": "8534c1bec8bde9d9641656508ab9476ad46acac394bd2de25bc0e6eeca4f5a72",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "1F34C.png",
+    "caption": "A yellow banana, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F34C.png",
+    "sha256": "27bd3c262ba8a9e2b7a96d7f43ef710c7309c3f2773a8c9001b5cafbdf47330b",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "1F697.png",
+    "caption": "A red car, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F697.png",
+    "sha256": "3ddc07e24158d60fce27eb2fc739e08edb19ae6f8a24a58ca8d327b37e4b6e76",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "1F680.png",
+    "caption": "A space rocket, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F680.png",
+    "sha256": "35c13f8c667410e9f6e7dde6eb96e84ee00bbe3e95287bab83e4fbea52807140",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "26BD.png",
+    "caption": "A soccer ball, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/26BD.png",
+    "sha256": "0bf8507b43d1ee579af04a3917e26dd6d6f04d2db84aeb93c160fd65cbe0290d",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "1F3B8.png",
+    "caption": "A guitar, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F3B8.png",
+    "sha256": "1e891ba56941ead277457918ae8ee62429ac7626e2b18b6e4c104491211e0ae8",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "1F3E0.png",
+    "caption": "A house, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F3E0.png",
+    "sha256": "b60915871876016aae8a6c67c399bea7fd974f38456e84623d6fcd5a30633e09",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  },
+  {
+    "file": "1F355.png",
+    "caption": "A slice of pizza, OpenMoji emoji illustration on a white background",
+    "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/17.0.0/color/618x618/1F355.png",
+    "sha256": "36beea286d028ba2ea621a893c3f205199284457edaece1d9807c9e68b345dd5",
+    "license": "CC-BY-SA-4.0",
+    "modifications": "None to source PNG; runtime composites transparency on white and resizes to 512x512"
+  }
+]

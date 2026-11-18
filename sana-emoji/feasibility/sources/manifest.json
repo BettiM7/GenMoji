@@ -1,0 +1,26 @@
+[
+  {
+    "file": "train_dreambooth_lora_sana.py",
+    "source": "https://github.com/NVlabs/Sana/blob/main/train_scripts/train_dreambooth_lora_sana.py",
+    "retrieved_date": "2026-11-18",
+    "sha256": "7ae122c6a237c16bf20d5559b0d46b6921c40b5810fa608f849cf7ac7a6187d3"
+  },
+  {
+    "file": "sana_lora_dreambooth.md",
+    "source": "https://github.com/NVlabs/Sana/blob/main/docs/sana_lora_dreambooth.md",
+    "retrieved_date": "2026-11-18",
+    "sha256": "c5ef9e96be65a9e1ac572ac711919721afe93b77829304ad57dec62a94807ab7"
+  },
+  {
+    "file": "README_sana.md",
+    "source": "https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/README_sana.md",
+    "retrieved_date": "2026-11-18",
+    "sha256": "94350538552d145be3b5d167a3dee31db6bdb962be2a46080bd9343777b3c3a7"
+  },
+  {
+    "file": "diffusers_train_dreambooth_lora_sana.py",
+    "source": "https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth_lora_sana.py",
+    "retrieved_date": "2026-11-18",
+    "sha256": "e0ccdd25c7b9c3adcf6c9ce350d79b3bdfa6e5557e133328dcbdbb55c8aabe80"
+  }
+]

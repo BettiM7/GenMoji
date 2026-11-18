@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-18",
+  "conclusion": "Corrected end-to-end step succeeded; ready for a bounded local pilot, not yet started",
+  "optimizer_updates_total": 2,
+  "optimizer_update_succeeded": true,
+  "official_schedule_forward_backward_succeeded": true,
+  "official_schedule_optimizer_update_tested": true,
+  "adapter_save_reload_exact": true,
+  "initial_result": "results/one_step_fp32/result.json",
+  "verification_result": "results/verification_no_update/result.json",
+  "training_step_seconds": 2.486525790998712,
+  "corrected_forward_backward_seconds": 0.66079983394593,
+  "sampled_peak_mps_driver_bytes": 13374308352,
+  "preserved_files_verified": 68,
+  "corrected_test_optimizer_updates": 1,
+  "corrected_result": "results/corrected_schedule_one_step/result.json",
+  "corrected_loss": 0.06663718819618225,
+  "corrected_training_step_seconds": 0.5218201668467373,
+  "corrected_optimizer_only_seconds": 0.01537891710177064,
+  "corrected_preserved_files_verified": 87,
+  "corrected_adapter_reload_exact": true
+}

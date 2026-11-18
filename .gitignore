@@ -48,3 +48,31 @@ Thumbs.db
 
 # Generated benchmark artifacts
 results/
+
+# Model weights and training checkpoints (download or regenerate locally)
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+
+# Local model/download caches and experiment trackers
+.cache/
+.huggingface/
+wandb/
+tensorboard/
+events.out.tfevents.*
+
+# Downloaded dataset archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Local preservation/rebuild checks; portable dataset manifests remain versioned
+/datasets/preservation_hashes.json
+/datasets/reproducibility_before.json
+/sana-emoji/feasibility/*preservation_hashes.json
+
+# Standalone inference test image (already tracked files are unaffected)
+/sana-emoji/sana_test.png

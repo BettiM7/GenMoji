@@ -1,0 +1,16 @@
+{
+  "dataset_validation": "passed",
+  "manifests_byte_identical_after_rebuild": true,
+  "protected_files_verified": 110,
+  "control_tests_passed": 4,
+  "model_training_executed": false,
+  "model_preprocessing_executed": false,
+  "validation_generation_executed": false,
+  "mps_resume_integration_tested": false,
+  "manifests_sha256": {
+    "train.jsonl": "3716eaef07f69495a23c94a9549285512fbf223aa4dfa520826930d9fb75a5b5",
+    "validation.jsonl": "d30f492aae1803d839af2d3a5b4f8a0ed8fd82c2daf27c6ee7a64e2f30e60f0f",
+    "pilot_train.jsonl": "4b369f84f51ad1525caff02282789bb8bf26cedc9c20492964c4e66d30375661",
+    "all.jsonl": "beeb91ca29fd13068d6bfb6d4553fba2c15efa8b9253deaef942b67e73a5219c"
+  }
+}

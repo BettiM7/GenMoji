@@ -2,6 +2,8 @@
 
 University Generative AI project for text-to-emoji generation.
 
+Shared data: [OpenMoji dataset report](datasets/DATASET_REPORT.md). Proposed adaptation: [bounded Sana pilot plan](sana-emoji/pilot/PILOT_PLAN.md). The pilot is prepared but has not been run.
+
 ```text
 GenMoji/
 ├── shared/                  # Team prompts, configuration and evaluation protocol

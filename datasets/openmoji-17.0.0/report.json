@@ -1,0 +1,77 @@
+{
+  "release": "17.0.0",
+  "seed": 42,
+  "metadata_entries": 4495,
+  "eligible_pngs": 1131,
+  "downloaded_pngs": 1190,
+  "selected": 1131,
+  "excluded": 3364,
+  "train": 1018,
+  "validation": 113,
+  "pilot_train": 192,
+  "exclusions_by_reason": {
+    "abstract_emotion_symbol": 40,
+    "skin_tone_variant": 2030,
+    "complex_family_or_symbol_variants": 48,
+    "flags_symbols_components": 640,
+    "clock_variant": 40,
+    "text_or_symbol_content": 27,
+    "abstract_game_symbol": 5,
+    "text_symbol_or_branded_object": 15,
+    "extras_outside_illustration_scope": 353,
+    "gender_variant": 166
+  },
+  "category_distribution": {
+    "all": {
+      "activities": 76,
+      "travel-places": 179,
+      "food-drink": 131,
+      "animals-nature": 160,
+      "people-body": 174,
+      "objects": 229,
+      "smileys-emotion": 131,
+      "extras-openmoji": 51
+    },
+    "train": {
+      "travel-places": 161,
+      "food-drink": 118,
+      "animals-nature": 144,
+      "activities": 68,
+      "people-body": 157,
+      "objects": 206,
+      "smileys-emotion": 118,
+      "extras-openmoji": 46
+    },
+    "validation": {
+      "activities": 8,
+      "travel-places": 18,
+      "animals-nature": 16,
+      "food-drink": 13,
+      "objects": 23,
+      "people-body": 17,
+      "smileys-emotion": 13,
+      "extras-openmoji": 5
+    },
+    "pilot_train": {
+      "activities": 24,
+      "animals-nature": 24,
+      "extras-openmoji": 24,
+      "food-drink": 24,
+      "objects": 24,
+      "people-body": 24,
+      "smileys-emotion": 24,
+      "travel-places": 24
+    }
+  },
+  "near_duplicate_pairs": 32,
+  "metadata_sha256": "ab181dd523021dfbe2b98a13d96ab384b7b3014d17815261bc267fb39d9a211b",
+  "preparation_script_sha256": "7c6fcff984fdafbee67927afcc0d927be6853ddd278ef2f23aae5357781c1e69",
+  "software": {
+    "python": "3.14.4",
+    "Pillow": "13.0.0",
+    "numpy": "2.5.5"
+  },
+  "caption_overrides": {
+    "E148": "broom and dustpan"
+  }
+}

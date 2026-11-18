@@ -1,0 +1,7 @@
+vendor/
+__pycache__/
+*.log
+results/
+
+# Downloaded smoke-test images; keep captions, attribution and license
+data/openmoji/*.png
