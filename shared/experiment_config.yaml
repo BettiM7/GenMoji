@@ -1,0 +1,36 @@
+benchmark: text-to-emoji-v1
+prompts_file: shared/prompts.json
+image:
+  width: 512
+  height: 512
+  background: white
+seeds: [42, 123, 456]
+baseline:
+  # Every team member uses exact prompt text and seed IDs.
+  # Model-specific parameters should NOT be forced to the same values.
+  save_all_images: true
+  record_model_revision: true
+  record_scheduler: true
+  record_steps: true
+  record_guidance: true
+  record_seed: true
+  record_runtime_seconds: true
+  record_hardware: true
+  record_precision: true
+  record_peak_memory_if_available: true
+output_pattern: "{model_folder}/results/{condition}/{prompt_id}/seed_{seed}.png"
+# Person 2 candidate baseline only; validate settings on local machine.
+sana_candidate:
+  model_id: Efficient-Large-Model/Sana_600M_512px_diffusers
+  model_revision: 83d7a190bfd1fd070570a793d2dab5c7a3231b9d
+  variant: fp16
+  inference_steps: 20
+  guidance_scale: 4.5
+  default_seeds: [42]
+logging:
+  condition: pretrained_baseline
+  metadata: per-image JSON sidecar; written last as completion marker
+  timing: synchronized pipeline wall time, excludes loading and file saving
+  warmup: none; first generation marked cold, do not use for steady-state speed claims
+  resume: skip only matching metadata and valid image; conflicts require --overwrite
+  contact_sheet: contact_sheet.png for the current selected prompts and seeds

@@ -1,0 +1,11 @@
+# Direct dependencies from the existing working Python 3.14.4 ARM64 environment.
+torch==2.15.0
+diffusers==0.43.0
+transformers==5.23.0
+accelerate==1.16.0
+huggingface_hub==2.4.0
+safetensors==0.8.0
+sentencepiece==0.2.3
+protobuf==7.36.2
+Pillow==13.0.0
+PyYAML==6.0.3

@@ -1,0 +1,644 @@
+{
+  "benchmark_name": "text-to-emoji-v1",
+  "version": "1.0",
+  "style_suffix": "flat vector emoji style, simple shapes, clean outlines, white background",
+  "notes": "Use prompt exactly, without extra negative prompts, rewriting, translation, or model-specific style modifiers in the primary baseline. Each expected element is an independently rated check; label the relation separately.",
+  "prompts": [
+    {
+      "id": "simple_01",
+      "category": "simple",
+      "content": "A happy avocado",
+      "prompt": "A happy avocado, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "avocado"
+        },
+        {
+          "type": "emotion",
+          "value": "happy"
+        }
+      ]
+    },
+    {
+      "id": "simple_02",
+      "category": "simple",
+      "content": "A sleepy penguin",
+      "prompt": "A sleepy penguin, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "penguin"
+        },
+        {
+          "type": "emotion",
+          "value": "sleepy"
+        }
+      ]
+    },
+    {
+      "id": "simple_03",
+      "category": "simple",
+      "content": "A sad robot",
+      "prompt": "A sad robot, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "robot"
+        },
+        {
+          "type": "emotion",
+          "value": "sad"
+        }
+      ]
+    },
+    {
+      "id": "simple_04",
+      "category": "simple",
+      "content": "An angry strawberry",
+      "prompt": "An angry strawberry, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "strawberry"
+        },
+        {
+          "type": "emotion",
+          "value": "angry"
+        }
+      ]
+    },
+    {
+      "id": "simple_05",
+      "category": "simple",
+      "content": "A surprised octopus",
+      "prompt": "A surprised octopus, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "octopus"
+        },
+        {
+          "type": "emotion",
+          "value": "surprised"
+        }
+      ]
+    },
+    {
+      "id": "simple_06",
+      "category": "simple",
+      "content": "A laughing cactus",
+      "prompt": "A laughing cactus, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "cactus"
+        },
+        {
+          "type": "emotion",
+          "value": "laughing"
+        }
+      ]
+    },
+    {
+      "id": "simple_07",
+      "category": "simple",
+      "content": "A frightened mushroom",
+      "prompt": "A frightened mushroom, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "mushroom"
+        },
+        {
+          "type": "emotion",
+          "value": "frightened"
+        }
+      ]
+    },
+    {
+      "id": "simple_08",
+      "category": "simple",
+      "content": "A cheerful dinosaur",
+      "prompt": "A cheerful dinosaur, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "dinosaur"
+        },
+        {
+          "type": "emotion",
+          "value": "cheerful"
+        }
+      ]
+    },
+    {
+      "id": "simple_09",
+      "category": "simple",
+      "content": "A crying cloud",
+      "prompt": "A crying cloud, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "cloud"
+        },
+        {
+          "type": "emotion",
+          "value": "crying"
+        }
+      ]
+    },
+    {
+      "id": "simple_10",
+      "category": "simple",
+      "content": "A confused toaster",
+      "prompt": "A confused toaster, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "toaster"
+        },
+        {
+          "type": "emotion",
+          "value": "confused"
+        }
+      ]
+    },
+    {
+      "id": "attributes_01",
+      "category": "attributes",
+      "content": "A nervous avocado astronaut",
+      "prompt": "A nervous avocado astronaut, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "avocado"
+        },
+        {
+          "type": "emotion",
+          "value": "nervous"
+        },
+        {
+          "type": "role",
+          "value": "astronaut"
+        }
+      ]
+    },
+    {
+      "id": "attributes_02",
+      "category": "attributes",
+      "content": "A sleepy penguin wearing a red scarf",
+      "prompt": "A sleepy penguin wearing a red scarf, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "penguin"
+        },
+        {
+          "type": "emotion",
+          "value": "sleepy"
+        },
+        {
+          "type": "accessory",
+          "value": "red scarf"
+        }
+      ]
+    },
+    {
+      "id": "attributes_03",
+      "category": "attributes",
+      "content": "A happy blue robot wearing a yellow hat",
+      "prompt": "A happy blue robot wearing a yellow hat, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "robot"
+        },
+        {
+          "type": "emotion",
+          "value": "happy"
+        },
+        {
+          "type": "color",
+          "value": "blue robot"
+        },
+        {
+          "type": "accessory",
+          "value": "yellow hat"
+        }
+      ]
+    },
+    {
+      "id": "attributes_04",
+      "category": "attributes",
+      "content": "An angry cactus wearing sunglasses",
+      "prompt": "An angry cactus wearing sunglasses, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "cactus"
+        },
+        {
+          "type": "emotion",
+          "value": "angry"
+        },
+        {
+          "type": "accessory",
+          "value": "sunglasses"
+        }
+      ]
+    },
+    {
+      "id": "attributes_05",
+      "category": "attributes",
+      "content": "A surprised orange octopus wearing a crown",
+      "prompt": "A surprised orange octopus wearing a crown, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "octopus"
+        },
+        {
+          "type": "emotion",
+          "value": "surprised"
+        },
+        {
+          "type": "color",
+          "value": "orange octopus"
+        },
+        {
+          "type": "accessory",
+          "value": "crown"
+        }
+      ]
+    },
+    {
+      "id": "attributes_06",
+      "category": "attributes",
+      "content": "A sad strawberry holding a green umbrella",
+      "prompt": "A sad strawberry holding a green umbrella, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "strawberry"
+        },
+        {
+          "type": "emotion",
+          "value": "sad"
+        },
+        {
+          "type": "accessory",
+          "value": "green umbrella"
+        },
+        {
+          "type": "relation",
+          "value": "holding"
+        }
+      ]
+    },
+    {
+      "id": "attributes_07",
+      "category": "attributes",
+      "content": "A smiling dinosaur wearing purple boots",
+      "prompt": "A smiling dinosaur wearing purple boots, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "dinosaur"
+        },
+        {
+          "type": "emotion",
+          "value": "smiling"
+        },
+        {
+          "type": "accessory",
+          "value": "purple boots"
+        }
+      ]
+    },
+    {
+      "id": "attributes_08",
+      "category": "attributes",
+      "content": "A frightened mushroom wearing a tiny backpack",
+      "prompt": "A frightened mushroom wearing a tiny backpack, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "mushroom"
+        },
+        {
+          "type": "emotion",
+          "value": "frightened"
+        },
+        {
+          "type": "accessory",
+          "value": "tiny backpack"
+        }
+      ]
+    },
+    {
+      "id": "attributes_09",
+      "category": "attributes",
+      "content": "A laughing cloud wearing headphones",
+      "prompt": "A laughing cloud wearing headphones, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "cloud"
+        },
+        {
+          "type": "emotion",
+          "value": "laughing"
+        },
+        {
+          "type": "accessory",
+          "value": "headphones"
+        }
+      ]
+    },
+    {
+      "id": "attributes_10",
+      "category": "attributes",
+      "content": "A confused toaster with a red bow tie",
+      "prompt": "A confused toaster with a red bow tie, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "toaster"
+        },
+        {
+          "type": "emotion",
+          "value": "confused"
+        },
+        {
+          "type": "accessory",
+          "value": "red bow tie"
+        }
+      ]
+    },
+    {
+      "id": "relationships_01",
+      "category": "relationships",
+      "content": "A sleepy penguin drinking coffee while wearing a blue hat",
+      "prompt": "A sleepy penguin drinking coffee while wearing a blue hat, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "penguin"
+        },
+        {
+          "type": "emotion",
+          "value": "sleepy"
+        },
+        {
+          "type": "action",
+          "value": "drinking coffee"
+        },
+        {
+          "type": "accessory",
+          "value": "blue hat"
+        }
+      ]
+    },
+    {
+      "id": "relationships_02",
+      "category": "relationships",
+      "content": "A nervous avocado astronaut holding a tiny blue planet",
+      "prompt": "A nervous avocado astronaut holding a tiny blue planet, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "avocado"
+        },
+        {
+          "type": "emotion",
+          "value": "nervous"
+        },
+        {
+          "type": "role",
+          "value": "astronaut"
+        },
+        {
+          "type": "action",
+          "value": "holding a tiny blue planet"
+        }
+      ]
+    },
+    {
+      "id": "relationships_03",
+      "category": "relationships",
+      "content": "A sad robot giving a red flower to a happy cat",
+      "prompt": "A sad robot giving a red flower to a happy cat, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "robot"
+        },
+        {
+          "type": "emotion",
+          "value": "sad"
+        },
+        {
+          "type": "action",
+          "value": "giving red flower to cat"
+        },
+        {
+          "type": "second_object",
+          "value": "cat"
+        },
+        {
+          "type": "second_emotion",
+          "value": "happy"
+        }
+      ]
+    },
+    {
+      "id": "relationships_04",
+      "category": "relationships",
+      "content": "A cheerful dinosaur riding a bicycle while carrying a yellow balloon",
+      "prompt": "A cheerful dinosaur riding a bicycle while carrying a yellow balloon, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "dinosaur"
+        },
+        {
+          "type": "emotion",
+          "value": "cheerful"
+        },
+        {
+          "type": "action",
+          "value": "riding bicycle"
+        },
+        {
+          "type": "accessory",
+          "value": "yellow balloon"
+        }
+      ]
+    },
+    {
+      "id": "relationships_05",
+      "category": "relationships",
+      "content": "An angry strawberry chasing a smiling mushroom",
+      "prompt": "An angry strawberry chasing a smiling mushroom, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "strawberry"
+        },
+        {
+          "type": "emotion",
+          "value": "angry"
+        },
+        {
+          "type": "action",
+          "value": "chasing mushroom"
+        },
+        {
+          "type": "second_object",
+          "value": "mushroom"
+        },
+        {
+          "type": "second_emotion",
+          "value": "smiling"
+        }
+      ]
+    },
+    {
+      "id": "relationships_06",
+      "category": "relationships",
+      "content": "A frightened cactus hiding behind a large orange pumpkin",
+      "prompt": "A frightened cactus hiding behind a large orange pumpkin, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "cactus"
+        },
+        {
+          "type": "emotion",
+          "value": "frightened"
+        },
+        {
+          "type": "action",
+          "value": "hiding behind pumpkin"
+        },
+        {
+          "type": "second_object",
+          "value": "orange pumpkin"
+        }
+      ]
+    },
+    {
+      "id": "relationships_07",
+      "category": "relationships",
+      "content": "A surprised octopus juggling three yellow stars",
+      "prompt": "A surprised octopus juggling three yellow stars, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "octopus"
+        },
+        {
+          "type": "emotion",
+          "value": "surprised"
+        },
+        {
+          "type": "action",
+          "value": "juggling"
+        },
+        {
+          "type": "count",
+          "value": "three stars"
+        },
+        {
+          "type": "color",
+          "value": "yellow stars"
+        }
+      ]
+    },
+    {
+      "id": "relationships_08",
+      "category": "relationships",
+      "content": "A laughing cloud watering a small flower with a blue watering can",
+      "prompt": "A laughing cloud watering a small flower with a blue watering can, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "cloud"
+        },
+        {
+          "type": "emotion",
+          "value": "laughing"
+        },
+        {
+          "type": "action",
+          "value": "watering flower"
+        },
+        {
+          "type": "object_2",
+          "value": "small flower"
+        },
+        {
+          "type": "accessory",
+          "value": "blue watering can"
+        }
+      ]
+    },
+    {
+      "id": "relationships_09",
+      "category": "relationships",
+      "content": "A confused toaster reading a book while sitting on a chair",
+      "prompt": "A confused toaster reading a book while sitting on a chair, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "toaster"
+        },
+        {
+          "type": "emotion",
+          "value": "confused"
+        },
+        {
+          "type": "action",
+          "value": "reading book"
+        },
+        {
+          "type": "position",
+          "value": "sitting on chair"
+        }
+      ]
+    },
+    {
+      "id": "relationships_10",
+      "category": "relationships",
+      "content": "A crying robot hugging a happy penguin under a red umbrella",
+      "prompt": "A crying robot hugging a happy penguin under a red umbrella, flat vector emoji style, simple shapes, clean outlines, white background",
+      "expected_elements": [
+        {
+          "type": "object",
+          "value": "robot"
+        },
+        {
+          "type": "emotion",
+          "value": "crying"
+        },
+        {
+          "type": "action",
+          "value": "hugging penguin"
+        },
+        {
+          "type": "second_object",
+          "value": "penguin"
+        },
+        {
+          "type": "second_emotion",
+          "value": "happy"
+        },
+        {
+          "type": "accessory",
+          "value": "red umbrella"
+        }
+      ]
+    }
+  ]
+}
