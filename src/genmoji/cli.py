@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 import subprocess
 
+from genmoji.data import DEFAULT_TEST_FRACTION, DEFAULT_VALIDATION_FRACTION
 from genmoji.models import PROFILES, dataset_path
 
 
@@ -17,8 +18,8 @@ def main() -> None:
     prepare.add_argument("--output", type=Path, default=None)
     prepare.add_argument("--resolution", type=int, default=None)
     prepare.add_argument("--seed", type=int, default=42)
-    prepare.add_argument("--validation-fraction", type=float, default=0.1)
-    prepare.add_argument("--test-fraction", type=float, default=0.1)
+    prepare.add_argument("--validation-fraction", type=float, default=DEFAULT_VALIDATION_FRACTION)
+    prepare.add_argument("--test-fraction", type=float, default=DEFAULT_TEST_FRACTION)
     prepare.add_argument("--limit", type=int, help="Small smoke-test subset; use a separate output")
     diffusion = commands.add_parser("diffusion", help="Stable Diffusion experiments")
     diffusion_commands = diffusion.add_subparsers(dest="diffusion_command", required=True)

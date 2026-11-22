@@ -30,7 +30,7 @@ package versions with `python -m pip freeze > outputs/environment.txt`.
 - Include all metadata entries (including flags, symbols, extras, and skin tones).
   There is no hidden category filtering. Record any future filtering consistently
   for both models, and regenerate both from that same selection.
-- Assign roughly 80% train / 10% validation / 10% test using SHA-256 of seed 42
+- Assign roughly 90% train / 10% validation using SHA-256 of seed 42
   and a skin-tone family key. Skin-tone variants and their base stay together.
   Fractions are approximate because families are indivisible. Other related or
   near-duplicate designs can still cross splits; this is not a semantic holdout.
@@ -44,9 +44,9 @@ package versions with `python -m pip freeze > outputs/environment.txt`.
 CLI overrides: `--architecture sd15|sdxl` (selects default resolution and output path), `--source`, `--output`, `--resolution`, `--seed`,
 `--validation-fraction`, `--test-fraction`, and `--limit`. A smoke subset can have
 empty held-out splits; use the full dataset for experiments.
-If a split is empty, loading the entire ImageFolder root can fail in Datasets;
-use the provided checker, which skips empty splits, or load a nonempty split's
-directory directly for smoke tests.
+Preparation omits empty split directories and records their zero counts in the
+manifest. For the former 80/10/10 split, pass `--test-fraction 0.1` and a separate
+`--output` path.
 
 ## Shared ingestion contract
 
@@ -63,7 +63,7 @@ these same `image` and `text` columns:
 ```python
 from datasets import load_dataset
 
-dataset = load_dataset("imagefolder", data_dir="data/processed/openmoji-512/imagefolder")
+dataset = load_dataset("imagefolder", data_dir="data/processed/openmoji-512-90-10/imagefolder")
 example = dataset["train"][0]
 assert example["image"].mode == "RGB"
 assert example["image"].size == (512, 512)
@@ -72,8 +72,9 @@ caption = example["text"]
 
 Use the `imagefolder/` path, not its parent containing provenance. To make a training
 example consume only the training split, pass `imagefolder/train` as the dataset
-path. Neither model's baseline inference needs training data; use the team's fixed
-evaluation prompts for inference. Emoji held-out images and novel-composition
+path. For baseline inference, use the
+[Text-to-Emoji v1 benchmark](../benchmarks/text-to-emoji-v1/evaluation_protocol.md).
+Emoji held-out images and novel-composition
 evaluation prompts measure different things.
 
 ## Training-script setup (separate GPU environment)
@@ -104,7 +105,7 @@ accepts this ImageFolder directly:
 ```bash
 accelerate launch external/diffusers/examples/text_to_image/train_text_to_image_lora.py \
   --pretrained_model_name_or_path stable-diffusion-v1-5/stable-diffusion-v1-5 \
-  --train_data_dir data/processed/openmoji-512/imagefolder/train \
+  --train_data_dir data/processed/openmoji-512-90-10/imagefolder/train \
   --image_column image --caption_column text \
   --resolution 512 --center_crop \
   --train_batch_size 1 --gradient_accumulation_steps 4 \
@@ -123,7 +124,7 @@ genmoji prepare --architecture sdxl
 genmoji diffusion train --architecture sdxl --device cuda
 ```
 
-This renders source SVGs directly at 1024px into `data/processed/openmoji-1024`;
+This renders source SVGs directly at 1024px into `data/processed/openmoji-1024-90-10`;
 family-based splits and captions are identical to the 512px version. Outputs go
 to `outputs/diffusion/lora-sdxl`. In the Colab notebook, set `ARCHITECTURE` at
 the start to apply the selection to all steps, including archive restore and resume.
@@ -137,7 +138,7 @@ loads local ImageFolder datasets via `--dataset_name` and supports per-image cap
 ```bash
 accelerate launch external/diffusers/examples/dreambooth/train_dreambooth_lora_sana.py \
   --pretrained_model_name_or_path Efficient-Large-Model/Sana_600M_512px_diffusers \
-  --dataset_name data/processed/openmoji-512/imagefolder/train \
+  --dataset_name data/processed/openmoji-512-90-10/imagefolder/train \
   --image_column image --caption_column text \
   --instance_prompt "OpenMoji style emoji" \
   --resolution 512 --center_crop \

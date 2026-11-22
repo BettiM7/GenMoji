@@ -38,7 +38,10 @@ class DatasetTests(unittest.TestCase):
         output = self.root / "prepared"
         manifest = prepare_dataset(self.source, output, resolution=32)
         self.assertEqual(sum(manifest["counts"].values()), len(self.rows))
-        self.assertTrue(all(manifest["counts"].values()))
+        self.assertGreater(manifest["counts"]["train"], 0)
+        self.assertGreater(manifest["counts"]["validation"], 0)
+        self.assertEqual(manifest["counts"]["test"], 0)
+        self.assertFalse((output / "imagefolder/test").exists())
         records = json.loads((output / "provenance/records.json").read_text())
         by_code = {row["hexcode"]: row for row in records}
         self.assertEqual(by_code["1F600"]["split"], by_code["1F600-1F3FB"]["split"])
@@ -56,7 +59,7 @@ class DatasetTests(unittest.TestCase):
         self.assertIn("Verified 65 examples", result.stdout)
         from datasets import load_dataset
         splits = load_dataset("imagefolder", data_dir=str(output / "imagefolder"))
-        self.assertEqual(set(splits), {"train", "validation", "test"})
+        self.assertEqual(set(splits), {"train", "validation"})
         self.assertEqual(len(splits["train"]), manifest["counts"]["train"])
 
     def test_sdxl_renders_svg_directly_at_1024(self):
@@ -75,7 +78,7 @@ class DatasetTests(unittest.TestCase):
         self.rows.reverse()
         self.write_metadata()
         prepare_dataset(self.source, self.root / "second", resolution=8)
-        for split in ("train", "validation", "test"):
+        for split in ("train", "validation"):
             first = self.root / "first/imagefolder" / split / "metadata.jsonl"
             second = self.root / "second/imagefolder" / split / "metadata.jsonl"
             self.assertEqual(first.read_bytes(), second.read_bytes())

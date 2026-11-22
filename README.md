@@ -63,16 +63,17 @@ src/genmoji/
   data.py                 # SVG rasterization, captions, family splits, provenance
 data/
   raw/openmoji/           # downloaded source; ignored by Git
-  processed/openmoji-512/ # generated data; ignored by Git
+  processed/openmoji-512-90-10/ # generated data; ignored by Git
     imagefolder/
       train/              # RGB PNGs + metadata.jsonl
       validation/         # same format
-      test/               # same format
     provenance/           # source hashes, authors, settings, license
 experiments/
   diffusion/README.md     # Person 1: SD baseline and LoRA integration
   flow_matching/README.md # Person 2: Sana integration and feasibility
   guidance/README.md      # Person 3: shared SD data and prompt conventions
+benchmarks/
+  text-to-emoji-v1/        # frozen evaluation prompts, settings, and scoring protocol
 scripts/
   check_dataset.py        # verify ImageFolder decoding and split isolation
 docs/dataset.md           # data contract and training entry points
@@ -80,12 +81,12 @@ outputs/                  # model adapters, images, logs; ignored by Git
 tests/                    # data pipeline regression tests
 ```
 
-The experiment folders are implementation handoffs; model training and custom
-guidance are not implemented yet. All methods should share the prepared data,
-prompt set, seeds, and 512px output size.
+All methods use the [Text-to-Emoji v1 benchmark](benchmarks/text-to-emoji-v1/evaluation_protocol.md)
+for evaluation. It defines 30 exact prompts, seeds 42, 123, and 456, and 512px
+RGB exports. Training uses the separately prepared OpenMoji data.
 
 ```bash
-python scripts/check_dataset.py data/processed/openmoji-512
+python scripts/check_dataset.py data/processed/openmoji-512-90-10
 python -m unittest discover -s tests -v
 ```
 

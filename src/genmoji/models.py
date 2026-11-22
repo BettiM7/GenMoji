@@ -17,4 +17,4 @@ PROFILES = {
 
 
 def dataset_path(architecture):
-    return f"data/processed/openmoji-{PROFILES[architecture]['resolution']}"
+    return f"data/processed/openmoji-{PROFILES[architecture]['resolution']}-90-10"

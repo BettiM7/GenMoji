@@ -53,8 +53,13 @@ def add_arguments(parser):
 def configure(args):
     """Apply family defaults while preserving explicit path/model overrides."""
     profile = PROFILES[args.architecture]
-    args.data = args.data or Path(dataset_path(args.architecture))
     args.output = args.output or Path(profile["output"])
+    record = args.output / "training.json"
+    if args.data is None and args.resume and record.is_file():
+        recorded_data = json.loads(record.read_text())["config"].get("data")
+        if recorded_data:
+            args.data = Path(recorded_data)
+    args.data = args.data or Path(dataset_path(args.architecture))
     args.model = args.model or profile["model"]
     return profile
 

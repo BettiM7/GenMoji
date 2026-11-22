@@ -70,7 +70,7 @@ checkpoint.mkdir(exist_ok=True)
                 command = build_command(args, args.model, "fp16", None)
                 self.assertEqual(Path(command[command.index("--trainer") + 1]).name, trainer)
                 self.assertEqual(command[command.index("--resolution") + 1], str(resolution))
-                self.assertEqual(args.data.name, f"openmoji-{resolution}")
+                self.assertEqual(args.data.name, f"openmoji-{resolution}-90-10")
                 self.assertIn(architecture == "sdxl" and "xl" or "v1-5", args.model)
 
     def test_sdxl_export_downloads_second_encoder_and_rejects_cross_family_resume(self):
@@ -87,7 +87,9 @@ checkpoint.mkdir(exist_ok=True)
         self.assertEqual(record["config"]["architecture"], "sdxl")
         self.assertEqual(record["status"], "completed")
         self.args.resume = "latest"
+        self.args.data = None
         train(self.args)
+        self.assertEqual(self.args.data, self.data)
         self.args.architecture = "sd15"
         manifest.write_text(json.dumps({"resolution": 512, "mode": "RGB", "counts": {"train": 1}}))
         with self.assertRaisesRegex(ValueError, "changed architecture"):

@@ -10,6 +10,9 @@ import subprocess
 import tempfile
 from xml.etree.ElementTree import tostring
 
+DEFAULT_VALIDATION_FRACTION = 0.1
+DEFAULT_TEST_FRACTION = 0.0
+
 
 def prepare_svg(svg: bytes) -> tuple[bytes, list[dict]]:
     """Remove dangling local marker attributes that crash CairoSVG.
@@ -57,7 +60,7 @@ def write_json(path: Path, value: object) -> None:
 
 def prepare_dataset(
     source: Path, output: Path, resolution: int = 512, seed: int = 42,
-    validation_fraction: float = 0.1, test_fraction: float = 0.1,
+    validation_fraction: float = DEFAULT_VALIDATION_FRACTION, test_fraction: float = DEFAULT_TEST_FRACTION,
     limit: int | None = None,
 ) -> dict:
     """Build in a temporary directory; publish only when every SVG succeeds.
@@ -167,7 +170,8 @@ def prepare_dataset(
         # a dedicated ImageFolder and leave provenance alongside it.
         dataset = root / "imagefolder"
         dataset.mkdir()
-        for split in counts:
-            (root / split).rename(dataset / split)
+        for split, count in counts.items():
+            if count:
+                (root / split).rename(dataset / split)
         root.rename(output)
     return manifest

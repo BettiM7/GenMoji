@@ -21,6 +21,8 @@ def check(root: Path) -> None:
     total = 0
     for split, count in manifest["counts"].items():
         folder = root / "imagefolder" / split
+        if count == 0 and not folder.exists():
+            continue
         metadata = [json.loads(line) for line in (folder / "metadata.jsonl").read_text().splitlines()]
         names = [row["file_name"] for row in metadata]
         if len(names) != len(set(names)) or len(names) != count:
@@ -28,7 +30,7 @@ def check(root: Path) -> None:
         if set(names) != {path.name for path in folder.glob("*.png")}:
             raise ValueError(f"PNG/metadata mismatch: {split}")
         if count == 0:
-            print(f"{split}: empty (acceptable only for a small smoke subset)")
+            print(f"{split}: empty")
             continue
         # Same local-folder ingestion used by the upstream training scripts.
         dataset = load_dataset("imagefolder", data_dir=str(folder), split="train")

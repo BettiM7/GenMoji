@@ -15,9 +15,10 @@ pushing it and the training code to the `diffusion` branch. The notebook include
 dataset backup and checkpoint recovery instructions. Set `ARCHITECTURE = "sd15"`
 or `"sdxl"` in its first code cell before running the notebook. This selection
 controls SVG-to-PNG conversion, dataset archives, model/trainer selection,
-training, resume and baseline/adapted PNG generation. SD1.5 uses 512px and
-`lora/`; SDXL uses 1024px and `lora-sdxl/`. Each family has a separate Drive
-archive and output folder. Keep the same selection when resuming.
+training, resume and baseline/adapted PNG generation. The notebook uses separate
+90/10 dataset archives and Drive output folders for SD1.5 at 512px
+(`lora-90-10/`) and SDXL at 1024px (`lora-sdxl-90-10/`). Keep the same
+selection when resuming.
 
 Run from the repository root with the Python 3.12 environment activated. Install
 the diffusion extra above, then obtain the pinned upstream training script once:
@@ -61,7 +62,7 @@ genmoji diffusion train --architecture sdxl --device cuda --resume latest --step
 ```
 
 SDXL defaults to `stabilityai/stable-diffusion-xl-base-1.0`, 1024px PNGs rendered
-directly from SVG, `data/processed/openmoji-1024`, and
+directly from SVG, `data/processed/openmoji-1024-90-10`, and
 `outputs/diffusion/lora-sdxl`. It uses the unmodified
 [Diffusers v0.35.1 SDXL trainer](https://github.com/huggingface/diffusers/blob/v0.35.1/examples/text_to_image/train_text_to_image_lora_sdxl.py),
 including both tokenizers and text encoders. Training updates UNet LoRA layers;
@@ -132,26 +133,30 @@ python experiments/diffusion/generate.py --training-record outputs/diffusion/lor
 The adapter can be a downloaded `.safetensors` file or a folder containing
 `pytorch_lora_weights.safetensors`. Pass `--training-record` explicitly if
 `training.json` was downloaded separately. Use the same options for both runs.
-By default three prompts and three seeds are generated in separate `baseline/`
-and `adapted/` folders under `outputs/diffusion/images/`, with JSON metadata.
-Repeat `--prompt` and `--seed` to override defaults, and pass `--output` to
-choose another parent folder. Existing files are never overwritten. CUDA, MPS
-and CPU are detected automatically; the first run downloads the base model.
-Adapted image filenames include the training step when it can be verified from
-the matching training record or checkpoint directory (otherwise `step-unknown`).
-Baseline filenames end in `base`. Sampling steps are recorded separately in JSON.
+The default is [Text-to-Emoji v1](../../benchmarks/text-to-emoji-v1/evaluation_protocol.md).
+It generates 90 images per condition using the 30 exact prompts and seeds 42,
+123, and 456. PNGs and JSON sidecars go under
+`outputs/diffusion/text-to-emoji-v1/<model>/<condition>/<prompt_id>/`. The
+sidecars record the exact prompt, category, expected elements, and sampling
+settings. The condition is `base` or the adapter's verified training step,
+with the weight included when explicitly set.
+
+Use `--prompt-id` and `--seed` to run a smaller benchmark subset, or repeat
+`--prompt` to use custom subjects with the OpenMoji training-style template.
+Repeat `--raw-prompt` for custom prompt text passed verbatim to the model.
+Use `--output` to select a result root. Existing files are protected. CUDA, MPS,
+and CPU are detected automatically. The first run downloads the base model.
 Generation infers the architecture from `training.json` (older records mean
 SD1.5), or accepts `--architecture sd15|sdxl` explicitly. Without a record it
 defaults to SD1.5. For an SDXL baseline without a training record:
 
 ```bash
-python experiments/diffusion/generate.py --architecture sdxl --output outputs/diffusion/images-sdxl
+python experiments/diffusion/generate.py --architecture sdxl
 ```
 
-Use `--export-size 128` (or 64, etc.) to downscale when saving. Generation
-occurs at the selected model's native size (512px or 1024px), so export size
-does not reduce inference time or memory. PNG dimensions and metadata follow
-the selection. Use separate image output folders when comparing model families.
+Benchmark exports default to 512px. SDXL generates at 1024px and resizes to
+512px on export. Use `--export-size` for an exploratory comparison at a
+different viewing size. Generation still uses the model's native resolution.
 
 Use the 512px (SD1.5) or 1024px (SDXL) OpenMoji ImageFolder; the exact trainer arguments are in
 [the dataset guide](../../docs/dataset.md#stable-diffusion-15--person-1).
@@ -159,3 +164,38 @@ Write adapters to `outputs/diffusion/lora/`, generated images and logs to
 `outputs/diffusion/`. Log model revision, dataset manifest, prompt, seed, steps,
 guidance, precision, resolution, elapsed time, and peak memory where available.
 Coordinate model loading and scheduler choices with Person 3.
+
+## SDXL adapter-strength sweep
+
+From the repository root, activate the environment and run:
+
+```bash
+source .venv/bin/activate
+bash experiments/diffusion/sweep_sdxl.sh
+```
+
+The default strength sweep renders seven images on MPS with DDIM, 30 steps,
+and CFG 7.5. It compares base SDXL with the 250- and 1,000-update checkpoints
+at weights 0.25, 0.5, and 1.0. All seven use benchmark prompt
+`relationships_01` (a sleepy penguin drinking coffee while wearing a blue hat)
+and seed 42. Outputs go to `outputs/diffusion/sdxl-strength-quick/`. Use
+`--prompt-id` or `--seed` to change the selection.
+
+The full 630-image run is opt-in:
+
+```bash
+bash experiments/diffusion/sweep_sdxl.sh --full
+```
+
+Add `--dry-run` to preview reuse and output counts. Both checkpoint folders under
+`outputs/diffusion/lora-sdxl/` need the standalone
+`pytorch_lora_weights.safetensors` file. If you move the sweep to a different
+device, pass `--device cuda` or `--device cpu`. Existing images generated on MPS
+are eligible for reuse on MPS when prompt text, seed, and generation settings match.
+
+Full sweep results go to `outputs/diffusion/sdxl-strength-sweep/`. Pass
+`--reuse-from outputs/diffusion/sdxl-strength-quick` to reuse matching images
+from a completed quick sweep. Use the benchmark rubric to rate emoji style and
+prompt adherence independently. If interrupted,
+start with a new `--output` and add `--reuse-from` pointing to the partial output
+folder to reuse completed PNG and JSON pairs.

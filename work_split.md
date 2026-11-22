@@ -160,7 +160,10 @@ This is **illustrative pseudocode**, not a standalone executable snippet: the im
 - **Diversity:** Are results varied across seeds or overly similar?
 - **Efficiency:** What is the extra runtime from multiple model predictions per step?
 
-Use approximately **20–30 prompts**, with multiple fixed seeds per prompt. The custom approach may be slower: standard CFG generally uses two predictions per step, while the proposed method uses three.
+Use the 30 [Text-to-Emoji v1 prompts](benchmarks/text-to-emoji-v1/prompts.json)
+with seeds 42, 123, and 456. Standard CFG generally uses two predictions per
+step, while the proposed method uses three, so compare function evaluations
+and elapsed time.
 
 ### Deliverable
 
@@ -184,13 +187,11 @@ The three contributions are coordinated through **one dataset, one evaluation pr
 | Common output resolution, random seeds, metrics, and experiment logging | All three |
 | Side-by-side comparisons, poster figures, and final findings | All three |
 
-### Proposed evaluation protocol
+### Shared evaluation protocol
 
-1. Choose prompts spanning simple objects, multiple attributes, object interactions, and unusual combinations.
-2. Keep output resolution and prompt text identical across methods; record model-specific settings and seeds.
-3. Rate prompt adherence (objects, attributes, relationships) and emoji-style consistency, preferably with a clear rubric and more than one rater.
-4. Measure generation time and peak memory where supported; generate multiple seeds to assess diversity.
-5. Present side-by-side image grids and document failures, not just the best images.
+Use [Text-to-Emoji v1](benchmarks/text-to-emoji-v1/evaluation_protocol.md) for the
+frozen prompt set, seeds, output specification, scoring rubric, and efficiency
+measurements. Present side-by-side examples that include failure cases.
 
 **Dataset limitation:** Standard emoji datasets have few complex interactions. Fine-tuning may teach style more effectively than compositional understanding, which is why Person 3's experiments are complementary to Person 1's work.
 
